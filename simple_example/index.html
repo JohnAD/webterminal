@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <title>example</title>
+    <script src="tiny_pre_tty.js"></script>
+    <script src="app.js"></script>
+    <style>
+      pre {
+        width: 90%;
+        overflow: auto;
+        padding: 1em;
+        margin-left: 2em;
+        font-size: 1.5em;   
+      }
+      pre span.in {
+        color: green;
+      }
+      pre span.out {
+        color: black;
+      }
+      .center {
+        margin: auto;
+        width: 80%;
+        border: 1px solid brown;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body onload="initTerminal(24)">
+    <p>
+      <pre id="terminal" width="80" style="border: 1px solid black">
+        initializing...
+      </pre>
+    </p>
+    <div class="center">
+      <p>
+        <input type="text" value="" id="input_dialog" size="80" />
+        <button type="button" onclick="sendInput()" id="input_button">Send</button>
+      </p>
+    </div>
+  </body>
+</html>
