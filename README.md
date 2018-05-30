@@ -10,15 +10,15 @@ This Nim/Javascript library consists of three parts:
 
 The result, using the included "simple example", looks like this:
 
-![simple example](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Simple Example Web Page")
+![simple example](https://github.com/JohnAD/webterminal/raw/master/screenshot.png "Simple Example Web Page")
 
-The user see the output in the large text box (an HTML PRE element). The user can also send a string with the HTML form below the box.
+The user see the output in the large text box (an HTML PRE element). The user can also send a string with the INPUT form element below the box.
 
 # How to Use
 
 1. Copy the `tiny_pre_tty.js` to the destination directory. It can be downloaded or forked from GitHub.
 
-2. Make the HTML file. Either start with on of the example, or include the following elements in the web page:
+2. Make the HTML file. Either start with one of the examples, or include the following elements in the web page:
 
     ```html
     <!doctype html>
@@ -45,12 +45,13 @@ The user see the output in the large text box (an HTML PRE element). The user ca
     
     Specifically, include:
     
-    a. `<script>` references to both `tiny_pre_tty.js` and whatever you name your app.
-    b. after loading the body, invoke `initTerminal(line-count)` where `line-count` is an integer representing how many lines you want in the terminal box.
-    c. a `<input>` element with an `id` of `input_dialog`.
-    d. a `<pre>` element with an `id` of `terminal`.
-    e. optionally, a '<button>` element with an `id` of `input_button`. Have the button generate a call to `sendInput()`.
+    i. `<script>` references to both `tiny_pre_tty.js` and whatever you name your app.
+    ii. after loading the body, invoke `initTerminal(line-count)` where `line-count` is an integer representing how many lines you want in the terminal box.
+    iii. a `<input>` element with an `id` of `input_dialog`.
+    iv. a `<pre>` element with an `id` of `terminal`.
+    v. optionally, a '<button>` element with an `id` of `input_button`. Have the button generate a call to `sendInput()`.
 
+    
     You can, of course, style the web page with CSS and other items. This example simply shows the bare minimum. Input displayed on the screen is wrapped with a `<span class="in">`.
 
 3. Create a nim script.
@@ -79,7 +80,7 @@ The user see the output in the large text box (an HTML PRE element). The user ca
     
     The procedure for capturing input is passed a single `string` parameter.
     
-    And example script:
+    An example script:
 
     ```
     import webterminal
@@ -101,4 +102,6 @@ The user see the output in the large text box (an HTML PRE element). The user ca
 # Live example:
 
 http://johnblue.cattailcreek9.com/knights/
+
+The source for this example can be found in the `knights_example` subdirectory. This example also requires the `turn_based_game` and `negamax` nimble libraries.
 
