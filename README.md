@@ -85,7 +85,7 @@ The user sees the output in the large text box (an HTML PRE element). The user c
     
     An example script:
 
-    ```
+    ```nim
     import webterminal
     
     # a simple example that simply repeats anything the user types
