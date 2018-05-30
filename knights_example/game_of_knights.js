@@ -565,7 +565,7 @@ setup_52713(game_56010[0], [{name: makeNimstrLit("White Knight"), m_type: NTI510
 function send_54019(msg_54021) {
 	var F={procname:"webterminal.send",prev:framePtr,filename:"/home/johnd/Projects/webterminal/src/webterminal.nim",line:0};
 	framePtr = F;
-		F.line = 15;
+		F.line = 21;
 		send(toJSStr(msg_54021));
 	framePtr = F.prev;
 

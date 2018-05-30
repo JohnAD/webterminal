@@ -1,6 +1,6 @@
 import turn_based_game
 import negamax
-import "../src/webterminal"
+import webterminal
 
 import knights
 
