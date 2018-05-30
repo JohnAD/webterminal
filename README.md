@@ -44,16 +44,16 @@ The user sees the output in the large text box (an HTML PRE element). The user c
     ```
     
     Specifically, include:
+        
+    a. `<script>` references to both `tiny_pre_tty.js` and whatever you name your app.
     
-i. `<script>` references to both `tiny_pre_tty.js` and whatever you name your app.
-
-ii. after loading the body, invoke `initTerminal(line-count)` where `line-count` is an integer representing how many lines you want in the terminal box.
-
-iii. a `<input>` element with an `id` of `input_dialog`.
-
-iv. a `<pre>` element with an `id` of `terminal`.
-
-v. optionally, a `<button>` element with an `id` of `input_button`. Have the button generate a call to `sendInput()`.
+    b. after loading the body, invoke `initTerminal(line-count)` where `line-count` is an integer representing how many lines you want in the terminal box.
+    
+    c. a `<input>` element with an `id` of `input_dialog`.
+    
+    d. a `<pre>` element with an `id` of `terminal`.
+    
+    e. optionally, a `<button>` element with an `id` of `input_button`. Have the button generate a call to `sendInput()`.
     
     You can, of course, style the web page with CSS and other items. This example simply shows the bare minimum. Input displayed on the screen is wrapped with a `<span class="in">`.
 
