@@ -1,6 +1,6 @@
 Introduction to webterminal
 ==============================================================================
-ver 0.0.1
+ver 0.0.2
 
 Very simple browser Javascript TTY web terminal
 

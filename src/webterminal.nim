@@ -136,5 +136,5 @@ proc send*(msg: string): void =
   send(msg.cstring)
   ## Use this procedure to send ``msg`` text to the web terminal.
   ##
-  ## Embed "\n" carriage return characters to move the terminal cursor to the next line.
+  ## Embed "\\n" carriage return characters to move the terminal cursor to the next line.
 
