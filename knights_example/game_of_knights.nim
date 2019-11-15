@@ -1,6 +1,7 @@
 import turn_based_game
 import negamax
 import webterminal
+import strutils
 
 import knights
 
@@ -8,22 +9,20 @@ let instructions = [
   "Each player has one chess knight in the corners of a 5x5 chessboard. Just",
   "like in regular chess, a Knight can jump in an \"L\" pattern. Each turn,",
   "move your knight to any tile that hasn't been occupied by a knight before.",
-  "The first player that cannot move loses."
+  "The first player that cannot move loses.",
+  " ",
+  "Please choose how many moves ahead your opponent can look (1 to 10):"
 ]
 
 type
   game_states = enum
-    init, waiting_on_user, playing_ai, game_over
+    init, get_level, waiting_on_user, playing_ai, game_over
 
 var
   game = Knights()
   current_state: game_states
 
 
-game.setup(@[
-  Player(name: "White Knight"),
-  NegamaxPlayer(name: "Black Knight", depth: 10)
-])
 
 
 proc handle_end(game: Knights) = 
@@ -35,7 +34,7 @@ proc handle_end(game: Knights) =
   if game.winner_player_number == 1:
     webterminal.send("YOU WON! The AI is out of moves.")
   else:
-    webterminal.send("The AI won. You ran out of moves.")
+    webterminal.send("The AI won. You ran out of moves but the AI has a move remaining.")
   webterminal.send("\nRefresh the browser page to play again.")
   current_state = game_over
 
@@ -50,52 +49,70 @@ proc show_turn_start(game: Knights) =
     webterminal.send("AI's turn (Black Knight)")
   webterminal.send(game.status())
   if game.current_player_number == 1:
-    webterminal.send("Possible moves: " & $moves_possible)
+    let move_display = moves_possible.join(", ")
+    webterminal.send("Possible moves: " & move_display)
     webterminal.send("Send move:")
   else:
     webterminal.send("Thinking...")
 
 proc on_load() =
-  current_state = waiting_on_user
+  current_state = get_level
   webterminal.send("Game of Knights")
   webterminal.send(" ")
   for line in instructions:
     webterminal.send(line)
-  show_turn_start(game)
 
 webterminal.establish_terminal_on_start_function(on_load)
 
 proc on_input(cmsg: cstring) = 
   var moves_possible: seq[string]
   var move: string
-  let msg = $cmsg
-  if game.is_over():
-    current_state = game_over
-    webterminal.send("game over")
-    return
-  if current_state != waiting_on_user:
-    return
-  game.set_possible_moves(moves_possible)
-  if msg in moves_possible:
-    webterminal.send(">>" & game.make_move(msg))
-    game.determine_winner()
-    if game.is_over():
-      handle_end(game)
-    else:
-      current_state = playing_ai
-      game.current_player_number = game.next_player_number()
-      show_turn_start(game)
-      move = game.current_player.get_move(game)
-      webterminal.send(">>" & game.make_move(move))
+  let msg_str = $cmsg
+  let msg = msg_str.toUpperAscii()
+  case current_state:
+  of waiting_on_user:
+    game.set_possible_moves(moves_possible)
+    if msg in moves_possible:
+      webterminal.send(">>" & game.make_move(msg))
       game.determine_winner()
       if game.is_over():
         handle_end(game)
+        current_state = game_over
       else:
+        current_state = playing_ai
         game.current_player_number = game.next_player_number()
         show_turn_start(game)
+        move = game.current_player.get_move(game)
+        webterminal.send(">>" & game.make_move(move))
+        game.determine_winner()
+        if game.is_over():
+          handle_end(game)
+          current_state = game_over
+        else:
+          game.current_player_number = game.next_player_number()
+          show_turn_start(game)
+          current_state = waiting_on_user
+    else:
+      webterminal.send("\"" & msg & "\" is not a recognized move. Try again.")
+  of get_level:
+    try:
+      let lvl = msg.parseInt()
+      if lvl < 1:
+        webterminal.send("Too low. Try again.")
+      elif lvl > 10:
+        webterminal.send("Too high. Try again.")
+      else:
+        game.setup(@[
+          Player(name: "White Knight"),
+          NegamaxPlayer(name: "Black Knight", depth: lvl)
+        ])
+        show_turn_start(game)
         current_state = waiting_on_user
+    except:
+      webterminal.send("Don't recognize \"$1\" as a number.".format(msg))
   else:
-    webterminal.send("\"" & msg & "\" is not a recognized move. Try again.")
+    current_state = game_over
+    webterminal.send("Internal error, reached an impossible state.")
 
 webterminal.establish_terminal_on_input_function(on_input)
 

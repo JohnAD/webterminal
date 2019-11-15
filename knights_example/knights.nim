@@ -11,8 +11,6 @@
 
 import strutils
 import turn_based_game
-import negamax
-import tables
 
 
 const
@@ -123,17 +121,22 @@ method make_move*(self: Knights, move: string): string =
   return "Jumped to $#.".format(move)
 
 
+proc move_counter(self: Knights, player_number: int): int =
+  let save_player = self.current_player_number
+  var poss_moves: seq[string] = @[]
+  self.current_player_number = player_number
+  self.set_possible_moves(poss_moves)
+  result = len(poss_moves)
+  self.current_player_number = save_player
+
+
 method determine_winner*(self: Knights) =
   if self.winner_player_number > 0:
     return
-  var poss_moves: seq[string] = @[]
-  var save_player = self.current_player_number
-  for p in [1, 2]:
-    self.current_player_number = p
-    self.set_possible_moves(poss_moves)
-    if len(poss_moves) == 0:
-      self.winner_player_number = self.next_player_number()
-  self.current_player_number = save_player
+  if self.move_counter(1) == 0:
+    self.winner_player_number = 2
+  if self.move_counter(2) == 0:
+    self.winner_player_number = 1
 
 
 # the following method is not _required_, but makes it nicer to read
@@ -160,18 +163,13 @@ method scoring*(self: Knights): float =
   #
   # first check border cases
   #
-  if self.winner_player_number == self.current_player_number:
-    return 1000.0
-  if self.winner_player_number != 0: # tie or opp won
+  if self.move_counter(self.current_player_number) == 0:
     return -1000.0
-  var poss_moves: seq[string] = @[]
-  self.set_possible_moves(poss_moves)
-  var my_move_score = float(len(poss_moves)) * 100.0
-  let save_player = self.current_player_number
-  self.current_player_number = self.next_player_number()
-  self.set_possible_moves(poss_moves)
-  self.current_player_number = save_player
-  var opp_move_score = float(len(poss_moves)) * 100.0
+  if self.move_counter(self.next_player_number()) == 0:
+    return 1000.00
+  #
+  let my_move_score = float(self.move_counter(self.current_player_number)) * 100.0  # max possible is 800.0
+  let opp_move_score = float(self.move_counter(self.next_player_number())) * 100.0
   return my_move_score - opp_move_score
 
 
