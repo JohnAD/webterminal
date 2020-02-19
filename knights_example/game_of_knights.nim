@@ -16,29 +16,39 @@ let instructions = [
 
 type
   game_states = enum
-    init, get_level, waiting_on_user, playing_ai, game_over
+    init, get_level, waiting_on_user, playing_ai, game_over, done
 
 var
   game = Knights()
   current_state: game_states
+  our_score: int = 0
+  ai_score: int = 0
 
 
-
-
-proc handle_end(game: Knights) = 
+proc handle_end(game: Knights) =
   webterminal.send(" ")
   webterminal.send("-----------------")
   webterminal.send("GAME OVER")
   webterminal.send(game.status())
   webterminal.send(" ")
   if game.winner_player_number == 1:
+    our_score += 1
     webterminal.send("YOU WON! The AI is out of moves.")
   else:
+    ai_score += 1
     webterminal.send("The AI won. You ran out of moves but the AI has a move remaining.")
-  webterminal.send("\nRefresh the browser page to play again.")
+  #webterminal.send("\nRefresh the browser page to play again.")
   current_state = game_over
+  webterminal.send("\n")
+  webterminal.send("-------------------------------------------\n")
+  webterminal.send("Your score: "& $our_score)
+  webterminal.send("AI score: "& $ai_score)
+  webterminal.send("-------------------------------------------\n")
+  webterminal.send("Do you want to play again? (y/n)\n")
 
-proc show_turn_start(game: Knights) = 
+
+
+proc show_turn_start(game: Knights) =
   var moves_possible: seq[string]
   game.set_possible_moves(moves_possible)
   webterminal.send(" ")
@@ -64,12 +74,22 @@ proc on_load() =
 
 webterminal.establish_terminal_on_start_function(on_load)
 
-proc on_input(cmsg: cstring) = 
+proc on_input(cmsg: cstring) =
   var moves_possible: seq[string]
   var move: string
   let msg_str = $cmsg
   let msg = msg_str.toUpperAscii()
   case current_state:
+  of game_over:
+    if msg == "Y":
+      ### if yes
+      game = Knights()
+      on_load()
+    elif msg == "N":
+      ####if no
+      current_state = done
+    else:
+      webterminal.send("\"" & msg & "\" is not a recognized move. Try again.")
   of waiting_on_user:
     game.set_possible_moves(moves_possible)
     if msg in moves_possible:
@@ -111,13 +131,12 @@ proc on_input(cmsg: cstring) =
     except:
       webterminal.send("Don't recognize \"$1\" as a number.".format(msg))
   else:
-    current_state = game_over
     webterminal.send("Internal error, reached an impossible state.")
 
 webterminal.establish_terminal_on_input_function(on_input)
 
 
-# method play*(self: Game) : seq[string] {.base discardable.} = 
+# method play*(self: Game) : seq[string] {.base discardable.} =
 #   result = @[]
 #   var move: string = ""
 #   while not self.is_over():
